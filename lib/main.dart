@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+enum AppScreen { splash, menu, howToPlay, game, gameOver }
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setPreferredOrientations([
@@ -61,12 +63,10 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: const LabPanicApp(),
+      home: LabPanicApp(),
     );
   }
 }
-
-enum AppScreen { splash, menu, howToPlay, game, gameOver }
 
 class LabPanicApp extends StatefulWidget {
   const LabPanicApp({super.key});
@@ -88,9 +88,7 @@ class _LabPanicAppState extends State<LabPanicApp> {
     super.initState();
     _loadBestScore();
     _splashTimer = Timer(const Duration(milliseconds: 1400), () {
-      if (!mounted) {
-        return;
-      }
+      if (!mounted) return;
       setState(() {
         _screen = AppScreen.menu;
       });
@@ -105,9 +103,7 @@ class _LabPanicAppState extends State<LabPanicApp> {
 
   Future<void> _loadBestScore() async {
     final prefs = await SharedPreferences.getInstance();
-    if (!mounted) {
-      return;
-    }
+    if (!mounted) return;
     setState(() {
       _bestScore = prefs.getInt(_bestScoreKey) ?? 0;
     });
@@ -124,9 +120,7 @@ class _LabPanicAppState extends State<LabPanicApp> {
       }
     }
 
-    if (!mounted) {
-      return;
-    }
+    if (!mounted) return;
 
     setState(() {
       _lastResult = result;
@@ -791,9 +785,11 @@ class _GameScreenState extends State<GameScreen> {
                     child: Stack(
                       clipBehavior: Clip.none,
                       children: [
-                        _LabPlayfieldBackground(
-                          boardSize: _boardSize,
-                          binZoneHeight: _binZoneHeight,
+                        Positioned.fill(
+                          child: _LabPlayfieldBackground(
+                            boardSize: _boardSize,
+                            binZoneHeight: _binZoneHeight,
+                          ),
                         ),
                         Positioned(
                           left: _shapePosition.dx,
@@ -1548,7 +1544,7 @@ class _BinPanel extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.transparent,
+        color: Colors.white.withOpacity(0.02),
         borderRadius: BorderRadius.circular(22),
         border: Border.all(color: shape.color.withOpacity(0.28), width: 1.0),
       ),
@@ -1577,7 +1573,7 @@ class _BinPanel extends StatelessWidget {
       ShapeType.triangle => 'assets/images/caixa_triangulo.png',
     };
 
-    return Image.asset(asset, fit: BoxFit.contain);
+    return SizedBox(height: 48, child: Image.asset(asset, fit: BoxFit.contain));
   }
 }
 
