@@ -1549,8 +1549,9 @@ class _BinPanel extends StatelessWidget {
         border: Border.all(color: shape.color.withOpacity(0.28), width: 1.0),
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Expanded(child: Center(child: _binImageFor(shape))),
+          Flexible(child: Center(child: _binImageFor(shape))),
           const SizedBox(height: 8),
           Text(
             shape.shortLabel,
