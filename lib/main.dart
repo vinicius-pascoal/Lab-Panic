@@ -1554,11 +1554,7 @@ class _BinPanel extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Expanded(
-            child: Center(
-              child: _binImageFor(shape),
-            ),
-          ),
+          Expanded(child: Center(child: _binImageFor(shape))),
           const SizedBox(height: 8),
           Text(
             shape.shortLabel,
