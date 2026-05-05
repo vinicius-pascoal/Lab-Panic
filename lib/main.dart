@@ -265,35 +265,19 @@ class SplashScreen extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               const _LabPulseLogo(size: 112),
-              const SizedBox(height: 24),
-              const Text(
-                'LAB PANIC',
-                style: TextStyle(
-                  fontSize: 42,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: 4,
-                  color: AppColors.textPrimary,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Organize as formas antes que o laboratório entre em colapso.',
-                style: Theme.of(context).textTheme.bodyLarge,
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 28),
-              const SizedBox(
-                width: 28,
-                height: 28,
-                child: CircularProgressIndicator(strokeWidth: 2.5),
-              ),
               const SizedBox(height: 20),
-              Text(
-                'Recorde: $bestScore',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: AppColors.textSecondary,
-                ),
+              _ScoreCard(
+                title: 'Melhor pontuação',
+                value: '$bestScore',
+                accent: AppColors.combo,
               ),
+              const SizedBox(height: 12),
+              Text(
+                'Arraste cada forma para o recipiente correto antes que a linha entre em falha.',
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
+              const SizedBox(height: 16),
             ],
           ),
         ),
@@ -993,34 +977,50 @@ class LabBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            AppColors.background,
-            AppColors.backgroundSecondary,
-            AppColors.background,
-          ],
+    return Stack(
+      children: [
+        // Fullscreen background image
+        Positioned.fill(
+          child: Image.asset(
+            'assets/images/fundo.png',
+            fit: BoxFit.cover,
+            alignment: Alignment.center,
+          ),
         ),
-      ),
-      child: Stack(
-        children: [
-          const Positioned(
-            top: -120,
-            right: -80,
-            child: _GlowOrb(color: AppColors.combo, size: 260),
+
+        // Gradient overlay to keep UI readable over the image
+        Positioned.fill(
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  AppColors.background.withOpacity(0.72),
+                  AppColors.backgroundSecondary.withOpacity(0.56),
+                  AppColors.background.withOpacity(0.72),
+                ],
+              ),
+            ),
           ),
-          const Positioned(
-            bottom: 60,
-            left: -100,
-            child: _GlowOrb(color: AppColors.circle, size: 220),
-          ),
-          const Positioned.fill(child: _GridOverlay()),
-          child,
-        ],
-      ),
+        ),
+
+        // Orbs and overlay elements
+        const Positioned(
+          top: -120,
+          right: -80,
+          child: _GlowOrb(color: AppColors.combo, size: 260),
+        ),
+        const Positioned(
+          bottom: 60,
+          left: -100,
+          child: _GlowOrb(color: AppColors.circle, size: 220),
+        ),
+        const Positioned.fill(child: _GridOverlay()),
+
+        // The app content floats above the background
+        child,
+      ],
     );
   }
 }
@@ -1442,15 +1442,6 @@ class _LabPlayfieldBackground extends StatelessWidget {
           Positioned.fill(
             child: ClipRRect(
               borderRadius: BorderRadius.circular(28),
-              child: Image.asset(
-                'assets/images/fundo.png',
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-          Positioned.fill(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(28),
               child: CustomPaint(
                 painter: _PlayfieldPainter(binZoneHeight: binZoneHeight),
               ),
@@ -1555,32 +1546,20 @@ class _BinPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 132,
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            shape.color.withOpacity(0.2),
-            AppColors.surface.withOpacity(0.76),
-          ],
-        ),
+        color: Colors.transparent,
         borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: shape.color.withOpacity(0.68), width: 1.2),
-        boxShadow: [
-          BoxShadow(
-            color: shape.color.withOpacity(0.08),
-            blurRadius: 16,
-            offset: const Offset(0, 10),
-          ),
-        ],
+        border: Border.all(color: shape.color.withOpacity(0.28), width: 1.0),
       ),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          SizedBox(height: 40, width: 40, child: ShapeGlyph(shape: shape)),
-          const SizedBox(height: 10),
+          Expanded(
+            child: Center(
+              child: _binImageFor(shape),
+            ),
+          ),
+          const SizedBox(height: 8),
           Text(
             shape.shortLabel,
             textAlign: TextAlign.center,
@@ -1593,6 +1572,16 @@ class _BinPanel extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Widget _binImageFor(ShapeType shape) {
+    final asset = switch (shape) {
+      ShapeType.circle => 'assets/images/caixa_circulo.png',
+      ShapeType.square => 'assets/images/caixa_quadrado.png',
+      ShapeType.triangle => 'assets/images/caixa_triangulo.png',
+    };
+
+    return Image.asset(asset, fit: BoxFit.contain);
   }
 }
 
