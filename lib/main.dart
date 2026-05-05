@@ -1434,12 +1434,20 @@ class _LabPlayfieldBackground extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface.withOpacity(0.28),
         borderRadius: BorderRadius.circular(28),
         border: Border.all(color: AppColors.border.withOpacity(0.55)),
       ),
       child: Stack(
         children: [
+          Positioned.fill(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(28),
+              child: Image.asset(
+                'assets/images/fundo.png',
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
           Positioned.fill(
             child: ClipRRect(
               borderRadius: BorderRadius.circular(28),
